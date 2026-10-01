@@ -1,32 +1,62 @@
-import { Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Put,
+  Patch,
+  Param,
+  Body,
+} from '@nestjs/common';
+
+import { BooksService } from './books.service.js';
+import { CreateBookDto } from './dto/create-book.dto.js';
 
 @Controller('books')
 export class BooksController {
-  @Post()
-  create(): string {
-    return 'Buku Berhasil ditambahkan';
-  }
+  constructor(private readonly booksService: BooksService) {}
 
+  // GET /books
   @Get()
-  findAll(): string {
-    return 'Menampilkan semua buku';
+  getBooks() {
+    return this.booksService.findAll();
   }
 
-  //Menampilkan data buku berdasarkan id
-    @Get(':id')
-    getBookByid(@Param('id') id: string): string {
-        return `Data buku berdasarkan id: ${id}`;
-    }
-    @Put(':id')
-    updateBookById(@Param('id') id: string): string {
-        return `Data buku dengan id ${id} berhasil diperbarui`;
-    }
-    @Patch(':id')
-    partiallyUpdateBookById(@Param('id') id: string): string {
-        return `Data buku dengan id ${id} berhasil diperbarui sebagian`;
-    }
-    @Delete(':id')
-    deleteBookById(@Param('id') id: string): string {
-        return `Data buku dengan id ${id} berhasil dihapus`;
-    }
+  // POST /books
+  @Post()
+  createBook(@Body() createBookDto: CreateBookDto) {
+    return this.booksService.create(createBookDto);
+  }
+
+  // GET /books/:id
+  @Get(':id')
+  getBookById(@Param('id') id: string) {
+    return {
+      data: `Buku dengan ID ${id}`,
+    };
+  }
+
+  // PUT /books/:id
+  @Put(':id')
+  updateBookById(@Param('id') id: string) {
+    return {
+      data: `Buku dengan ID ${id} berhasil diperbarui`,
+    };
+  }
+
+  // PATCH /books/:id
+  @Patch(':id')
+  updatePartialBook(@Param('id') id: string) {
+    return {
+      data: `Buku dengan ID ${id} berhasil diperbarui sebagian`,
+    };
+  }
+
+  // DELETE /books/:id
+  @Delete(':id')
+  deleteBookById(@Param('id') id: string) {
+    return {
+      data: `Buku dengan ID ${id} berhasil dihapus`,
+    };
+  }
 }
