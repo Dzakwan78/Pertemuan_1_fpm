@@ -1,38 +1,63 @@
-import { Injectable } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'; // sesuaikan jika ada yang lain
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+//PERBAIKAN IMPORT PATHsesuai struktur folder di VS Code
 import { Book } from './entities/book-entity.js';
 import { CreateBookDto } from './dto/create-book.dto.js';
+import { UpdateBookDto } from './dto/update-book.dto.js';
 
 @Injectable()
 export class BooksService {
-  private books: Book[] = [
-    {
-      id: 1,
-      title: 'The Great Gatsby',
-      author: 'Penulis 1',
-      isbn: '1234567890',
-      publishYear: 2020,
-      isAvailable: true,
-    },
-  ];
+  constructor(
+    @InjectRepository(Book)
+    private readonly bookRepository: Repository<Book>,
+  ) {}
 
-  // GET /books
-  findAll(): Book[] {
-    return this.books;
+  // 1. CREATE
+  async create(dto: CreateBookDto): Promise<Book> {
+    const newBook = this.bookRepository.create(dto);
+    return await this.bookRepository.save(newBook);
   }
 
-  // POST /books
-  create(createBookDto: CreateBookDto): Book {
-    const newBook: Book = {
-      id: this.books.length + 1,
-      title: createBookDto.title,
-      author: createBookDto.author,
-      isbn: createBookDto.isbn,
-      publishYear: createBookDto.publishYear,
-      isAvailable: createBookDto.isAvailable,
+  // 2. READ ALL
+  async findAll(): Promise<Book[]> {
+    return await this.bookRepository.find({
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  // 3. READ ONE
+  async findOne(id: string): Promise<Book> {
+    const book = await this.bookRepository.findOneBy({ id });
+    if (!book) {
+      throw new NotFoundException(`Buku dengan ID #${id} tidak ditemukan.`);
+    }
+    return book;
+  }
+
+  // 4. UPDATE
+  async update(id: string, dto: UpdateBookDto): Promise<Book> {
+    const book = await this.findOne(id);
+    const updatedBook = this.bookRepository.merge(book, dto);
+    return await this.bookRepository.save(updatedBook);
+  }
+
+  // 5. SOFT DELETE
+  async remove(id: string): Promise<{ message: string; deletedId: string }> {
+    await this.findOne(id);
+    await this.bookRepository.softDelete(id);
+
+    return {
+      message: `Buku #${id} berhasil diarsipkan.`,
+      deletedId: id,
     };
+  }
 
-    this.books.push(newBook);
-
-    return newBook;
+  // 6. RESTORE
+  async restore(id: string): Promise<{ message: string }> {
+    await this.bookRepository.restore(id);
+    return { message: `Buku #${id} berhasil dipulihkan.` };
   }
 }
