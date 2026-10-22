@@ -1,7 +1,7 @@
+
 services:
-  # Konfigurasi untuk container database
   postgres-db:
-    image: postgres:16-alpine # Menggunakan versi PostgreSQL 16 Alpine yang sangat ringan
+    image: postgres:16-alpine
     container_name: harkat_postgres_container
     restart: always
     environment:
@@ -9,10 +9,8 @@ services:
       POSTGRES_PASSWORD: supersecretpassword
       POSTGRES_DB: harkat_app_library
     ports:
-      # Format: "PortKomputerHost:PortContainerDalam"
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      # Menyimpan data database ke volume disk laptop agar data tidak hilang saat container dimatikan
       - postgres_data_volume:/var/lib/postgresql/data
 
 volumes:

@@ -1,3 +1,4 @@
+
 import {
   Controller,
   Get,
@@ -11,6 +12,7 @@ import {
 
 import { BooksService } from './books.service.js';
 import { CreateBookDto } from './dto/create-book.dto.js';
+import { UpdateBookDto } from './dto/update-book.dto.js';
 
 @Controller('books')
 export class BooksController {
@@ -31,32 +33,30 @@ export class BooksController {
   // GET /books/:id
   @Get(':id')
   getBookById(@Param('id') id: string) {
-    return {
-      data: `Buku dengan ID ${id}`,
-    };
+    return this.booksService.findOne(id);
   }
 
   // PUT /books/:id
   @Put(':id')
-  updateBookById(@Param('id') id: string) {
-    return {
-      data: `Buku dengan ID ${id} berhasil diperbarui`,
-    };
+  updateBookById(
+    @Param('id') id: string,
+    @Body() updateBookDto: UpdateBookDto,
+  ) {
+    return this.booksService.update(id, updateBookDto);
   }
 
   // PATCH /books/:id
   @Patch(':id')
-  updatePartialBook(@Param('id') id: string) {
-    return {
-      data: `Buku dengan ID ${id} berhasil diperbarui sebagian`,
-    };
+  updatePartialBook(
+    @Param('id') id: string,
+    @Body() updateBookDto: UpdateBookDto,
+  ) {
+    return this.booksService.update(id, updateBookDto);
   }
 
   // DELETE /books/:id
   @Delete(':id')
   deleteBookById(@Param('id') id: string) {
-    return {
-      data: `Buku dengan ID ${id} berhasil dihapus`,
-    };
+    return this.booksService.remove(id);
   }
 }

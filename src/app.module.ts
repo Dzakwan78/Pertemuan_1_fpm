@@ -1,3 +1,4 @@
+
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
@@ -6,13 +7,10 @@ import { AuthModule } from './auth/auth.module.js';
 import { LogMiddlewareMiddleware } from './middlewares/log-middleware/log-middleware.middleware.js';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Joi from 'joi';
-import { TypeORMError } from 'typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    BooksModule,
-    AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
@@ -29,18 +27,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     }),
 
     TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: String(configService.get<string>('DB_PASSWORD')),
-        database: configService.get<string>('DB_DATABASE'),
+        type: 'postgres' as const,
+        host: configService.getOrThrow<string>('DB_HOST'),
+        port: configService.getOrThrow<number>('DB_PORT'),
+        username: configService.getOrThrow<string>('DB_USERNAME'),
+        password: configService.getOrThrow<string>('DB_PASSWORD'),
+        database: configService.getOrThrow<string>('DB_DATABASE'),
         autoLoadEntities: true,
-        synchronize: true, // Otomatis sync tabel saat development
+        synchronize: true,
       }),
     }),
+
+    BooksModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
