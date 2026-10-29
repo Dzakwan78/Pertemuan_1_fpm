@@ -21,7 +21,7 @@ export class BooksService {
     return await this.bookRepository.save(newBook);
   }
 
-  // 2. READ ALL
+  // 2. READ ALL ( FInd By Id)
   async findAll(): Promise<Book[]> {
     return await this.bookRepository.find({
       order: { createdAt: 'DESC' },

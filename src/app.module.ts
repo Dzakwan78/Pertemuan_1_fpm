@@ -8,6 +8,11 @@ import { LogMiddlewareMiddleware } from './middlewares/log-middleware/log-middle
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module.js';
+import { AuthorModule } from './author/author.module.js';
+import { ProductModule } from './product/product.module.js';
+import { OrdersModule } from './orders/orders.module.js';
+import { OrderItemsModule } from './order_items/order_items.module.js';
 
 @Module({
   imports: [
@@ -43,6 +48,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
     BooksModule,
     AuthModule,
+    UsersModule,
+    AuthorModule,
+    ProductModule,
+    OrdersModule,
+    OrderItemsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
