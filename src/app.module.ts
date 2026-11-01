@@ -9,10 +9,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module.js';
+import { ShipmentsModule } from './shipments/shipments.module.js';
+import { PaymentsModule } from './payments/payments.module.js';
+import { BookAuthorsModule } from './book-authors/book-authors.module.js';
+import { AuthorsModule } from './authors/authors.module.js';
 import { AuthorModule } from './author/author.module.js';
 import { ProductModule } from './product/product.module.js';
 import { OrdersModule } from './orders/orders.module.js';
 import { OrderItemsModule } from './order_items/order_items.module.js';
+import { CustomersModule } from './customers/customers.module.js';
+import { CustomerAddressesModule } from './customer_addresses/customer_addresses.module.js';
+import { CategoriesModule } from './categories/categories.module.js';
+import { PublishersModule } from './publishers/publishers.module.js';
+import { UsersModule } from './users/users.module.js';
 
 @Module({
   imports: [
@@ -53,6 +62,14 @@ import { OrderItemsModule } from './order_items/order_items.module.js';
     ProductModule,
     OrdersModule,
     OrderItemsModule,
+    CustomersModule,
+    CustomerAddressesModule,
+    CategoriesModule,
+    PublishersModule,
+    AuthorsModule,
+    BookAuthorsModule,
+    PaymentsModule,
+    ShipmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
